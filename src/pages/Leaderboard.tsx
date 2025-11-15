@@ -1,26 +1,33 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { LeaderboardCard } from "@/components/LeaderboardCard";
 import { AddFriendsFlow } from "@/components/AddFriendsFlow";
 import { UserProfileSheet } from "@/components/UserProfileSheet";
-import { currentUser, friends, Friend } from "@/data/mockData";
+import { EditProfileModal } from "@/components/EditProfileModal";
+import { CrewManagementModal } from "@/components/CrewManagementModal";
+import { PRDetailModal } from "@/components/PRDetailModal";
+import { BadgeCard } from "@/components/BadgeCard";
+import { currentUser, friends, Friend, badges } from "@/data/mockData";
 import { cn } from "@/lib/utils";
-import { Trophy, Award, UserPlus, Edit } from "lucide-react";
+import { ArrowLeft, Trophy, UserPlus, Edit } from "lucide-react";
 
 type Tab = "weekly" | "monthly" | "badges";
 
 const Leaderboard = () => {
+  const navigate = useNavigate();
   const [hasSeenAddFriends, setHasSeenAddFriends] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>("weekly");
   const [selectedUser, setSelectedUser] = useState<Friend | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [editProfileOpen, setEditProfileOpen] = useState(false);
+  const [crewModalOpen, setCrewModalOpen] = useState(false);
+  const [prModalOpen, setPrModalOpen] = useState(false);
 
-  // Show add friends flow on first load
   if (!hasSeenAddFriends) {
     return <AddFriendsFlow onComplete={() => setHasSeenAddFriends(true)} />;
   }
 
-  // Combine current user with friends and sort by progress
   const allUsers = [
     { ...currentUser, isCurrentUser: true },
     ...friends.map(f => ({ ...f, isCurrentUser: false }))
@@ -34,18 +41,22 @@ const Leaderboard = () => {
 
   const currentUserRank = sortedUsers.findIndex(u => u.isCurrentUser) + 1;
 
-  const badges = [
-    { name: "Squat Master", icon: "💎", description: "Tap 10 times to unlock", unlocked: true },
-    { name: "Bench Beast", icon: "🏋️", description: "Tap 15 times to unlock", unlocked: true },
-    { name: "Deadlift Diamond", icon: "💠", description: "Tap 20 times to unlock", unlocked: false },
-    { name: "Push-up Pearl", icon: "⚪", description: "Tap 12 times to unlock", unlocked: false }
-  ];
-
   const handleUserClick = (user: any) => {
     if (!user.isCurrentUser) {
       setSelectedUser(user as Friend);
       setSheetOpen(true);
     }
+  };
+
+  const handlePRClick = (user: Friend) => {
+    setSelectedUser(user);
+    setPrModalOpen(true);
+  };
+
+  const userStats = {
+    maxPR: 225,
+    badgeCount: badges.filter(b => b.unlocked).length,
+    streak: currentUser.streak,
   };
 
   return (
@@ -55,21 +66,20 @@ const Leaderboard = () => {
         <div className="max-w-2xl mx-auto px-5 py-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
-              <img
-                src={currentUser.photo}
-                alt={currentUser.name}
-                className="w-16 h-16 rounded-full object-cover ring-2 ring-[#3B82F6]"
-              />
+              <button onClick={() => navigate("/")} className="p-2 hover:bg-[#131629] rounded-lg transition-all">
+                <ArrowLeft className="w-6 h-6 text-white" />
+              </button>
+              <img src={currentUser.photo} alt={currentUser.name} className="w-16 h-16 rounded-full object-cover ring-2 ring-[#3B82F6]" />
               <div>
                 <h2 className="text-white font-bold text-xl">{currentUser.name}</h2>
                 <p className="text-gray-400 text-sm">@{currentUser.username}</p>
               </div>
             </div>
             <div className="flex gap-2">
-              <button className="p-2 bg-[#131629] border border-[#1E3A8A]/30 rounded-lg hover:border-[#3B82F6]/50 transition-all">
+              <button onClick={() => setEditProfileOpen(true)} className="p-2 bg-[#131629] border border-[#1E3A8A]/30 rounded-lg hover:border-[#3B82F6]/50 transition-all">
                 <Edit className="w-5 h-5 text-[#3B82F6]" />
               </button>
-              <button className="px-4 py-2 bg-gradient-to-r from-[#1E3A8A] to-[#3B82F6] text-white rounded-lg text-sm font-medium hover:opacity-90 transition-all">
+              <button onClick={() => setCrewModalOpen(true)} className="px-4 py-2 bg-gradient-to-r from-[#1E3A8A] to-[#3B82F6] text-white rounded-lg text-sm font-medium hover:opacity-90 transition-all">
                 Join Crew
               </button>
             </div>

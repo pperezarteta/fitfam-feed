@@ -6,7 +6,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { Friend, todayWorkouts, badges } from "@/data/mockData";
+import { Friend, todaysWorkouts, badges } from "@/data/mockData";
 import { Progress } from "@/components/ui/progress";
 
 interface UserProfileSheetProps {
@@ -16,23 +16,9 @@ interface UserProfileSheetProps {
 }
 
 export const UserProfileSheet = ({ user, open, onOpenChange }: UserProfileSheetProps) => {
-  const [tappedBadges, setTappedBadges] = useState<{ [key: string]: number }>({});
-
   if (!user) return null;
 
   const completionPercentage = (user.weeklyWorkouts / user.gymGoalPerWeek) * 100;
-
-  const handleBadgeTap = (badgeId: string, required: number) => {
-    const currentTaps = tappedBadges[badgeId] || 0;
-    const newTaps = currentTaps + 1;
-    
-    setTappedBadges({ ...tappedBadges, [badgeId]: newTaps });
-
-    if (newTaps >= required) {
-      // Trigger confetti animation here
-      console.log("Badge unlocked! 🎉");
-    }
-  };
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -93,12 +79,12 @@ export const UserProfileSheet = ({ user, open, onOpenChange }: UserProfileSheetP
             Today's Workout
           </h3>
           <div className="bg-[#131629] border border-[#1E3A8A]/30 rounded-xl p-4 space-y-3">
-            {todayWorkouts.map((workout, index) => (
+            {todaysWorkouts.map((workout, index) => (
               <div key={index} className="flex justify-between items-center">
                 <div>
                   <p className="text-white font-medium">{workout.exercise}</p>
                   <p className="text-gray-400 text-sm">
-                    {workout.sets} × {workout.reps} @ {workout.weight}
+                    {workout.sets} × {workout.reps} @ {workout.weight}lb
                   </p>
                 </div>
               </div>
@@ -113,32 +99,32 @@ export const UserProfileSheet = ({ user, open, onOpenChange }: UserProfileSheetP
             Badges
           </h3>
           <div className="grid grid-cols-2 gap-3">
-            {badges.map((badge) => {
-              const taps = tappedBadges[badge.id] || 0;
-              const progress = (taps / badge.tapsRequired) * 100;
+            {badges.slice(0, 4).map((badge) => {
+              const progressPercentage = badge.progress
+                ? (badge.progress / badge.requirement.count) * 100
+                : 0;
               
               return (
-                <button
+                <div
                   key={badge.id}
-                  onClick={() => handleBadgeTap(badge.id, badge.tapsRequired)}
-                  className={`bg-[#131629] border border-[#1E3A8A]/30 rounded-xl p-4 text-center transition-all ${
+                  className={`bg-[#131629] border border-[#1E3A8A]/30 rounded-xl p-4 text-center ${
                     badge.unlocked ? "opacity-100" : "opacity-60"
-                  } hover:border-[#3B82F6]/50 active:scale-95`}
+                  }`}
                 >
                   <div className="text-4xl mb-2">{badge.icon}</div>
                   <p className="text-white text-sm font-medium mb-1">{badge.name}</p>
-                  {!badge.unlocked && (
+                  {!badge.unlocked && badge.progress !== undefined && (
                     <div className="space-y-1">
-                      <Progress value={progress} className="h-1" />
+                      <Progress value={progressPercentage} className="h-1" />
                       <p className="text-xs text-gray-400">
-                        {taps}/{badge.tapsRequired} taps
+                        {badge.progress}/{badge.requirement.count}
                       </p>
                     </div>
                   )}
                   {badge.unlocked && (
                     <p className="text-xs text-[#3B82F6]">Unlocked</p>
                   )}
-                </button>
+                </div>
               );
             })}
           </div>

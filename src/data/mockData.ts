@@ -20,6 +20,41 @@ export interface Post {
 export interface Friend extends User {
   lastWorkoutTime: string;
   pr?: string;
+  prDetails?: {
+    exercise: string;
+    weight: number;
+    reps: number;
+    date: string;
+  };
+}
+
+export interface Crew {
+  id: string;
+  name: string;
+  description: string;
+  isPrivate: boolean;
+  memberCount: number;
+  requirements?: {
+    minPR?: number;
+    minBadges?: number;
+    minStreak?: number;
+  };
+}
+
+export interface Badge {
+  id: string;
+  name: string;
+  icon: string;
+  description: string;
+  unlocked: boolean;
+  category: "consistency" | "social" | "achievement";
+  requirement: {
+    type: "workouts" | "friends" | "invites" | "streak";
+    count: number;
+  };
+  animationType: "squat" | "bench" | "deadlift" | "pushup";
+  animationDuration: number;
+  progress?: number;
 }
 
 export const currentUser: User = {
@@ -44,7 +79,13 @@ export const friends: Friend[] = [
     postedToday: true,
     weeklyWorkouts: 5,
     lastWorkoutTime: "2 hours ago",
-    pr: "Bench 225lb"
+    pr: "Bench 225lb",
+    prDetails: {
+      exercise: "Bench Press",
+      weight: 225,
+      reps: 1,
+      date: "2024-11-10",
+    },
   },
   {
     id: "3",
@@ -56,7 +97,13 @@ export const friends: Friend[] = [
     postedToday: true,
     weeklyWorkouts: 4,
     lastWorkoutTime: "4 hours ago",
-    pr: "Deadlift 315lb"
+    pr: "Deadlift 315lb",
+    prDetails: {
+      exercise: "Deadlift",
+      weight: 315,
+      reps: 1,
+      date: "2024-11-12",
+    },
   },
   {
     id: "4",
@@ -67,7 +114,13 @@ export const friends: Friend[] = [
     streak: 21,
     postedToday: true,
     weeklyWorkouts: 3,
-    lastWorkoutTime: "1 hour ago"
+    lastWorkoutTime: "1 hour ago",
+    prDetails: {
+      exercise: "Squat",
+      weight: 185,
+      reps: 5,
+      date: "2024-11-08",
+    },
   },
   {
     id: "5",
@@ -113,11 +166,119 @@ export const posts: Post[] = [
   }
 ];
 
-export const badges = [
-  { id: "1", name: "Squat Master", icon: "💎", unlocked: true, tapsRequired: 10 },
-  { id: "2", name: "Bench Beast", icon: "🏋️", unlocked: true, tapsRequired: 15 },
-  { id: "3", name: "Deadlift Diamond", icon: "💠", unlocked: false, tapsRequired: 20 },
-  { id: "4", name: "Push-up Pearl", icon: "⚪", unlocked: false, tapsRequired: 12 }
+export const badges: Badge[] = [
+  {
+    id: "first-rep",
+    name: "First Rep",
+    icon: "🎯",
+    description: "Record your first workout",
+    unlocked: true,
+    category: "achievement",
+    requirement: { type: "workouts", count: 1 },
+    animationType: "squat",
+    animationDuration: 2000,
+    progress: 1,
+  },
+  {
+    id: "week-warrior",
+    name: "7-Day Warrior",
+    icon: "🔥",
+    description: "Maintain a 7-day streak",
+    unlocked: true,
+    category: "consistency",
+    requirement: { type: "streak", count: 7 },
+    animationType: "bench",
+    animationDuration: 2500,
+    progress: 12,
+  },
+  {
+    id: "squad-leader",
+    name: "Squad Leader",
+    icon: "👥",
+    description: "Add 10 friends to your crew",
+    unlocked: false,
+    category: "social",
+    requirement: { type: "friends", count: 10 },
+    animationType: "deadlift",
+    animationDuration: 3000,
+    progress: 6,
+  },
+  {
+    id: "month-master",
+    name: "Month Master",
+    icon: "💎",
+    description: "Maintain a 30-day streak",
+    unlocked: false,
+    category: "consistency",
+    requirement: { type: "streak", count: 30 },
+    animationType: "squat",
+    animationDuration: 2000,
+    progress: 12,
+  },
+  {
+    id: "iron-will",
+    name: "Iron Will",
+    icon: "🏋️",
+    description: "Record 100 workouts",
+    unlocked: false,
+    category: "achievement",
+    requirement: { type: "workouts", count: 100 },
+    animationType: "bench",
+    animationDuration: 2500,
+    progress: 47,
+  },
+  {
+    id: "social-butterfly",
+    name: "Social Butterfly",
+    icon: "🦋",
+    description: "Add 25 friends",
+    unlocked: false,
+    category: "social",
+    requirement: { type: "friends", count: 25 },
+    animationType: "pushup",
+    animationDuration: 2000,
+    progress: 6,
+  },
+];
+
+export const crews: Crew[] = [
+  {
+    id: "1",
+    name: "Iron Warriors",
+    description: "Elite lifters pushing heavy weight",
+    isPrivate: true,
+    memberCount: 24,
+    requirements: {
+      minPR: 300,
+      minBadges: 5,
+      minStreak: 14,
+    },
+  },
+  {
+    id: "2",
+    name: "Morning Grinders",
+    description: "Early birds who crush workouts before sunrise",
+    isPrivate: false,
+    memberCount: 156,
+  },
+  {
+    id: "3",
+    name: "Consistency Kings",
+    description: "No excuses, just results",
+    isPrivate: true,
+    memberCount: 48,
+    requirements: {
+      minStreak: 30,
+      minBadges: 3,
+    },
+  },
+  {
+    id: "4",
+    name: "Fitness Fam",
+    description: "Supportive community for all fitness levels",
+    isPrivate: false,
+    memberCount: 342,
+  },
 ];
 
 export const potentialFriends = [
@@ -144,8 +305,9 @@ export const potentialFriends = [
   }
 ];
 
-export const todayWorkouts = [
-  { exercise: "Bench Press", sets: 4, reps: 10, weight: "185lb" },
-  { exercise: "Incline DB Press", sets: 3, reps: 12, weight: "60lb" },
-  { exercise: "Cable Flyes", sets: 3, reps: 15, weight: "30lb" }
+export const todaysWorkouts = [
+  { exercise: "Bench Press", sets: 4, reps: 8, weight: 185 },
+  { exercise: "Incline Dumbbell Press", sets: 3, reps: 10, weight: 70 },
+  { exercise: "Cable Flyes", sets: 3, reps: 12, weight: 35 },
+  { exercise: "Tricep Dips", sets: 3, reps: 15, weight: 0 },
 ];
