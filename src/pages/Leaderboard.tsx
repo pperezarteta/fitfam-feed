@@ -10,7 +10,7 @@ import { PRDetailModal } from "@/components/PRDetailModal";
 import { BadgeCard } from "@/components/BadgeCard";
 import { currentUser, friends, Friend, badges } from "@/data/mockData";
 import { cn } from "@/lib/utils";
-import { ArrowLeft, Trophy, UserPlus, Edit } from "lucide-react";
+import { ArrowLeft, Trophy, UserPlus, Edit, Award } from "lucide-react";
 
 type Tab = "weekly" | "monthly" | "badges";
 
@@ -202,54 +202,26 @@ const Leaderboard = () => {
           </div>
         )}
 
-        {/* Badges View */}
         {activeTab === "badges" && (
-          <div className="space-y-3">
-            <div className="bg-[#131629] border border-[#1E3A8A]/30 rounded-2xl p-5 text-center">
-              <div className="text-4xl mb-2">🏆</div>
-              <h3 className="font-bold text-white mb-1">Badge Collection</h3>
-              <p className="text-sm text-gray-400">
-                Tap badges multiple times to unlock them with confetti!
-              </p>
+          <div>
+            <div className="mb-4 p-4 bg-gradient-to-br from-[#1E3A8A]/30 to-[#3B82F6]/20 rounded-xl border border-[#3B82F6]/30">
+              <h3 className="text-white font-semibold mb-2">Badge Collection</h3>
+              <p className="text-sm text-gray-400">{badges.filter(b => b.unlocked).length} of {badges.length} badges unlocked</p>
             </div>
 
-            <div className="grid gap-3 mt-6">
+            <div className="grid grid-cols-2 gap-3">
               {badges.map((badge) => (
-                <div
-                  key={badge.name}
-                  className={cn(
-                    "bg-[#131629] border border-[#1E3A8A]/30 rounded-xl p-4 flex items-center gap-4 transition-all",
-                    badge.unlocked ? "border-[#3B82F6]" : "opacity-60"
-                  )}
-                >
-                  <div className="text-3xl">{badge.icon}</div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <p className="font-semibold text-white">{badge.name}</p>
-                      {badge.unlocked && (
-                        <Award className="w-4 h-4 text-[#3B82F6]" />
-                      )}
-                    </div>
-                    <p className="text-sm text-gray-400">{badge.description}</p>
-                  </div>
-                  {badge.unlocked && (
-                    <div className="text-xs font-semibold text-[#3B82F6] bg-[#3B82F6]/10 px-3 py-1 rounded-full">
-                      Unlocked
-                    </div>
-                  )}
-                </div>
+                <BadgeCard key={badge.id} badge={badge} onClick={() => navigate(`/leaderboard/badge/${badge.id}`)} />
               ))}
             </div>
           </div>
         )}
       </div>
 
-      {/* User Profile Sheet */}
-      <UserProfileSheet
-        user={selectedUser}
-        open={sheetOpen}
-        onOpenChange={setSheetOpen}
-      />
+      <UserProfileSheet user={selectedUser} open={sheetOpen} onOpenChange={setSheetOpen} />
+      <EditProfileModal open={editProfileOpen} onOpenChange={setEditProfileOpen} currentPhoto={currentUser.photo} currentName={currentUser.name} currentUsername={currentUser.username} currentGoal={currentUser.gymGoalPerWeek} />
+      <CrewManagementModal open={crewModalOpen} onOpenChange={setCrewModalOpen} userStats={userStats} />
+      <PRDetailModal open={prModalOpen} onOpenChange={setPrModalOpen} user={selectedUser} />
     </div>
   );
 };
