@@ -36,9 +36,9 @@ export const currentUser: User = {
 export const friends: Friend[] = [
   {
     id: "2",
-    name: "Mo",
-    username: "mo_fitness",
-    photo: "https://api.dicebear.com/7.x/avataaars/svg?seed=mo",
+    name: "Mark",
+    username: "mark_fitness",
+    photo: "https://api.dicebear.com/7.x/avataaars/svg?seed=mark",
     gymGoalPerWeek: 5,
     streak: 15,
     postedToday: true,
@@ -48,9 +48,9 @@ export const friends: Friend[] = [
   },
   {
     id: "3",
-    name: "Pablo",
-    username: "pablo_lifts",
-    photo: "https://api.dicebear.com/7.x/avataaars/svg?seed=pablo",
+    name: "Moises",
+    username: "moises_lifts",
+    photo: "https://api.dicebear.com/7.x/avataaars/svg?seed=moises",
     gymGoalPerWeek: 4,
     streak: 8,
     postedToday: true,
@@ -60,9 +60,9 @@ export const friends: Friend[] = [
   },
   {
     id: "4",
-    name: "Sarah",
-    username: "sarahstrong",
-    photo: "https://api.dicebear.com/7.x/avataaars/svg?seed=sarah",
+    name: "Maria",
+    username: "maria_strong",
+    photo: "https://api.dicebear.com/7.x/avataaars/svg?seed=maria",
     gymGoalPerWeek: 3,
     streak: 21,
     postedToday: true,
@@ -71,9 +71,9 @@ export const friends: Friend[] = [
   },
   {
     id: "5",
-    name: "Jake",
-    username: "jake_gains",
-    photo: "https://api.dicebear.com/7.x/avataaars/svg?seed=jake",
+    name: "Pablo",
+    username: "pablo_gains",
+    photo: "https://api.dicebear.com/7.x/avataaars/svg?seed=pablo",
     gymGoalPerWeek: 6,
     streak: 5,
     postedToday: true,
@@ -114,8 +114,38 @@ export const posts: Post[] = [
 ];
 
 export const badges = [
-  { id: "1", name: "7-Day Streak", icon: "🔥", unlocked: true },
-  { id: "2", name: "First PR", icon: "💪", unlocked: true },
-  { id: "3", name: "Consistency King", icon: "👑", unlocked: false },
-  { id: "4", name: "30-Day Streak", icon: "🏆", unlocked: false }
+  { id: "1", name: "Squat Master", icon: "💎", unlocked: true, tapsRequired: 10 },
+  { id: "2", name: "Bench Beast", icon: "🏋️", unlocked: true, tapsRequired: 15 },
+  { id: "3", name: "Deadlift Diamond", icon: "💠", unlocked: false, tapsRequired: 20 },
+  { id: "4", name: "Push-up Pearl", icon: "⚪", unlocked: false, tapsRequired: 12 }
+];
+
+export const potentialFriends = [
+  {
+    id: "6",
+    name: "Alex",
+    username: "alex_fit",
+    photo: "https://api.dicebear.com/7.x/avataaars/svg?seed=alex",
+    mutualFriends: 3
+  },
+  {
+    id: "7",
+    name: "Jordan",
+    username: "jordan_strong",
+    photo: "https://api.dicebear.com/7.x/avataaars/svg?seed=jordan",
+    mutualFriends: 5
+  },
+  {
+    id: "8",
+    name: "Sam",
+    username: "sam_gains",
+    photo: "https://api.dicebear.com/7.x/avataaars/svg?seed=sam",
+    mutualFriends: 2
+  }
+];
+
+export const todayWorkouts = [
+  { exercise: "Bench Press", sets: 4, reps: 10, weight: "185lb" },
+  { exercise: "Incline DB Press", sets: 3, reps: 12, weight: "60lb" },
+  { exercise: "Cable Flyes", sets: 3, reps: 15, weight: "30lb" }
 ];

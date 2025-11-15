@@ -29,8 +29,8 @@ export const LeaderboardCard = ({
   return (
     <div 
       className={cn(
-        "bg-card rounded-xl shadow-card p-4 transition-all",
-        isCurrentUser && "ring-2 ring-primary",
+        "bg-[#131629] border border-[#1E3A8A]/30 rounded-xl p-4 transition-all hover:border-[#3B82F6]/50",
+        isCurrentUser && "ring-2 ring-[#3B82F6]",
         className
       )}
     >
@@ -45,7 +45,7 @@ export const LeaderboardCard = ({
               rank === 3 && "text-amber-700"
             )} />
           ) : (
-            <span className="text-lg font-bold text-muted-foreground">#{rank}</span>
+            <span className="text-lg font-bold text-gray-400">#{rank}</span>
           )}
         </div>
 
@@ -53,15 +53,15 @@ export const LeaderboardCard = ({
         <img 
           src={photo} 
           alt={name}
-          className="w-12 h-12 rounded-full object-cover"
+          className="w-12 h-12 rounded-full object-cover ring-2 ring-[#1E3A8A]"
         />
 
         {/* Info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <p className="font-semibold text-foreground truncate">{name}</p>
+            <p className="font-semibold text-white truncate">{name}</p>
             {isCurrentUser && (
-              <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium">
+              <span className="text-xs bg-[#3B82F6]/10 text-[#3B82F6] px-2 py-0.5 rounded-full font-medium">
                 You
               </span>
             )}
@@ -69,13 +69,13 @@ export const LeaderboardCard = ({
           
           {/* Progress bar */}
           <div className="mt-2 space-y-1">
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
+            <div className="flex items-center justify-between text-xs text-gray-400">
               <span>{weeklyWorkouts}/{weeklyGoal} workouts</span>
               <span>{Math.round(progress)}%</span>
             </div>
-            <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+            <div className="h-1.5 bg-[#1E3A8A]/30 rounded-full overflow-hidden">
               <div 
-                className="h-full gradient-primary transition-all duration-300"
+                className="h-full bg-gradient-to-r from-[#1E3A8A] to-[#3B82F6] transition-all duration-300"
                 style={{ width: `${Math.min(progress, 100)}%` }}
               />
             </div>
@@ -83,7 +83,7 @@ export const LeaderboardCard = ({
 
           {/* PR Badge */}
           {pr && (
-            <div className="mt-2 flex items-center gap-1 text-xs text-accent">
+            <div className="mt-2 flex items-center gap-1 text-xs text-[#3B82F6]">
               <TrendingUp className="w-3 h-3" />
               <span className="font-medium">{pr}</span>
             </div>
@@ -94,7 +94,7 @@ export const LeaderboardCard = ({
         {streak > 0 && (
           <div className="text-center">
             <div className="text-xl">🔥</div>
-            <div className="text-xs font-semibold text-muted-foreground">{streak}d</div>
+            <div className="text-xs font-semibold text-gray-400">{streak}d</div>
           </div>
         )}
       </div>

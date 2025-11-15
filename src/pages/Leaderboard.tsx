@@ -1,14 +1,24 @@
 import { useState } from "react";
 import { Header } from "@/components/Header";
 import { LeaderboardCard } from "@/components/LeaderboardCard";
-import { currentUser, friends } from "@/data/mockData";
+import { AddFriendsFlow } from "@/components/AddFriendsFlow";
+import { UserProfileSheet } from "@/components/UserProfileSheet";
+import { currentUser, friends, Friend } from "@/data/mockData";
 import { cn } from "@/lib/utils";
-import { Trophy, Award } from "lucide-react";
+import { Trophy, Award, UserPlus, Edit } from "lucide-react";
 
 type Tab = "weekly" | "monthly" | "badges";
 
 const Leaderboard = () => {
+  const [hasSeenAddFriends, setHasSeenAddFriends] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>("weekly");
+  const [selectedUser, setSelectedUser] = useState<Friend | null>(null);
+  const [sheetOpen, setSheetOpen] = useState(false);
+
+  // Show add friends flow on first load
+  if (!hasSeenAddFriends) {
+    return <AddFriendsFlow onComplete={() => setHasSeenAddFriends(true)} />;
+  }
 
   // Combine current user with friends and sort by progress
   const allUsers = [
@@ -25,31 +35,59 @@ const Leaderboard = () => {
   const currentUserRank = sortedUsers.findIndex(u => u.isCurrentUser) + 1;
 
   const badges = [
-    { name: "7-Day Streak", icon: "🔥", description: "Work out 7 days in a row", unlocked: true },
-    { name: "First PR", icon: "💪", description: "Log your first personal record", unlocked: true },
-    { name: "Consistency King", icon: "👑", description: "Hit your weekly goal for 4 weeks", unlocked: false },
-    { name: "30-Day Streak", icon: "🏆", description: "Work out 30 days in a row", unlocked: false },
-    { name: "Team Player", icon: "🤝", description: "Motivate 5 friends", unlocked: false }
+    { name: "Squat Master", icon: "💎", description: "Tap 10 times to unlock", unlocked: true },
+    { name: "Bench Beast", icon: "🏋️", description: "Tap 15 times to unlock", unlocked: true },
+    { name: "Deadlift Diamond", icon: "💠", description: "Tap 20 times to unlock", unlocked: false },
+    { name: "Push-up Pearl", icon: "⚪", description: "Tap 12 times to unlock", unlocked: false }
   ];
 
+  const handleUserClick = (user: any) => {
+    if (!user.isCurrentUser) {
+      setSelectedUser(user as Friend);
+      setSheetOpen(true);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-background pb-20">
-      {/* Header */}
-      <div className="sticky top-0 bg-background/95 backdrop-blur-sm border-b border-border z-10">
-        <div className="max-w-2xl mx-auto px-5 py-4">
+    <div className="min-h-screen bg-[#0A0B14] pb-20">
+      {/* Profile Header */}
+      <div className="bg-gradient-to-br from-[#0A0B14] via-[#1E3A8A]/20 to-[#0A0B14] border-b border-[#1E3A8A]/30">
+        <div className="max-w-2xl mx-auto px-5 py-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <img
+                src={currentUser.photo}
+                alt={currentUser.name}
+                className="w-16 h-16 rounded-full object-cover ring-2 ring-[#3B82F6]"
+              />
+              <div>
+                <h2 className="text-white font-bold text-xl">{currentUser.name}</h2>
+                <p className="text-gray-400 text-sm">@{currentUser.username}</p>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <button className="p-2 bg-[#131629] border border-[#1E3A8A]/30 rounded-lg hover:border-[#3B82F6]/50 transition-all">
+                <Edit className="w-5 h-5 text-[#3B82F6]" />
+              </button>
+              <button className="px-4 py-2 bg-gradient-to-r from-[#1E3A8A] to-[#3B82F6] text-white rounded-lg text-sm font-medium hover:opacity-90 transition-all">
+                Join Crew
+              </button>
+            </div>
+          </div>
+
           <Header title="Leaderboard" subtitle={`You're #${currentUserRank} this week`} />
         </div>
 
         {/* Tabs */}
         <div className="max-w-2xl mx-auto px-5">
-          <div className="flex gap-2 pb-3">
+          <div className="flex gap-2 pb-4">
             <button
               onClick={() => setActiveTab("weekly")}
               className={cn(
                 "flex-1 py-2 px-4 rounded-lg font-medium text-sm transition-all",
                 activeTab === "weekly"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-card text-muted-foreground hover:bg-muted"
+                  ? "bg-gradient-to-r from-[#1E3A8A] to-[#3B82F6] text-white"
+                  : "bg-[#131629] text-gray-400 hover:bg-[#1a1d35] border border-[#1E3A8A]/30"
               )}
             >
               Weekly
@@ -59,8 +97,8 @@ const Leaderboard = () => {
               className={cn(
                 "flex-1 py-2 px-4 rounded-lg font-medium text-sm transition-all",
                 activeTab === "monthly"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-card text-muted-foreground hover:bg-muted"
+                  ? "bg-gradient-to-r from-[#1E3A8A] to-[#3B82F6] text-white"
+                  : "bg-[#131629] text-gray-400 hover:bg-[#1a1d35] border border-[#1E3A8A]/30"
               )}
             >
               Monthly
@@ -70,8 +108,8 @@ const Leaderboard = () => {
               className={cn(
                 "flex-1 py-2 px-4 rounded-lg font-medium text-sm transition-all",
                 activeTab === "badges"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-card text-muted-foreground hover:bg-muted"
+                  ? "bg-gradient-to-r from-[#1E3A8A] to-[#3B82F6] text-white"
+                  : "bg-[#131629] text-gray-400 hover:bg-[#1a1d35] border border-[#1E3A8A]/30"
               )}
             >
               Badges
@@ -84,43 +122,50 @@ const Leaderboard = () => {
         {/* Weekly/Monthly View */}
         {(activeTab === "weekly" || activeTab === "monthly") && (
           <div className="space-y-6">
+            {/* Add Friends Button */}
+            <button className="w-full bg-[#131629] border border-[#1E3A8A]/30 rounded-xl p-4 flex items-center justify-center gap-2 hover:border-[#3B82F6]/50 transition-all">
+              <UserPlus className="w-5 h-5 text-[#3B82F6]" />
+              <span className="text-white font-medium">Add More Friends</span>
+            </button>
+
             {/* Your rank card */}
-            <div className="bg-gradient-to-br from-primary/10 to-accent/10 rounded-2xl p-5 border-2 border-primary/20">
+            <div className="bg-gradient-to-br from-[#1E3A8A]/20 to-[#3B82F6]/20 rounded-2xl p-5 border border-[#3B82F6]/30">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <Trophy className="w-5 h-5 text-primary" />
-                  <span className="font-semibold text-foreground">Your Rank</span>
+                  <Trophy className="w-5 h-5 text-[#3B82F6]" />
+                  <span className="font-semibold text-white">Your Rank</span>
                 </div>
-                <span className="text-2xl font-bold text-primary">#{currentUserRank}</span>
+                <span className="text-2xl font-bold text-[#3B82F6]">#{currentUserRank}</span>
               </div>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-gray-400">
                 {currentUser.weeklyWorkouts} of {currentUser.gymGoalPerWeek} workouts completed
               </p>
             </div>
 
             {/* Crew Rankings */}
             <div className="space-y-3">
-              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+              <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wide">
                 Crew Rankings
               </h3>
               {sortedUsers.map((user, index) => (
-                <LeaderboardCard
-                  key={user.id}
-                  rank={index + 1}
-                  name={user.name}
-                  photo={user.photo}
-                  streak={user.streak}
-                  weeklyWorkouts={user.weeklyWorkouts}
-                  weeklyGoal={user.gymGoalPerWeek}
-                  pr={user.id !== currentUser.id ? (user as any).pr : undefined}
-                  isCurrentUser={user.isCurrentUser}
-                />
+                <div key={user.id} onClick={() => handleUserClick(user)} className="cursor-pointer">
+                  <LeaderboardCard
+                    rank={index + 1}
+                    name={user.name}
+                    photo={user.photo}
+                    streak={user.streak}
+                    weeklyWorkouts={user.weeklyWorkouts}
+                    weeklyGoal={user.gymGoalPerWeek}
+                    pr={user.id !== currentUser.id ? (user as any).pr : undefined}
+                    isCurrentUser={user.isCurrentUser}
+                  />
+                </div>
               ))}
             </div>
 
             {/* PR Section */}
             <div className="space-y-3 mt-8">
-              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+              <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wide">
                 Recent PRs 🔥
               </h3>
               {friends
@@ -129,7 +174,7 @@ const Leaderboard = () => {
                 .map(friend => (
                   <div
                     key={friend.id}
-                    className="bg-accent/10 border border-accent/20 rounded-xl p-4 flex items-center gap-3"
+                    className="bg-[#131629] border border-[#3B82F6]/30 rounded-xl p-4 flex items-center gap-3"
                   >
                     <img
                       src={friend.photo}
@@ -137,10 +182,10 @@ const Leaderboard = () => {
                       className="w-10 h-10 rounded-full object-cover"
                     />
                     <div className="flex-1">
-                      <p className="font-semibold text-foreground">{friend.name}</p>
-                      <p className="text-sm text-accent font-medium">{friend.pr}</p>
+                      <p className="font-semibold text-white">{friend.name}</p>
+                      <p className="text-sm text-[#3B82F6] font-medium">{friend.pr}</p>
                     </div>
-                    <Trophy className="w-5 h-5 text-accent" />
+                    <Trophy className="w-5 h-5 text-[#3B82F6]" />
                   </div>
                 ))}
             </div>
@@ -150,11 +195,11 @@ const Leaderboard = () => {
         {/* Badges View */}
         {activeTab === "badges" && (
           <div className="space-y-3">
-            <div className="bg-card rounded-2xl shadow-card p-5 text-center">
+            <div className="bg-[#131629] border border-[#1E3A8A]/30 rounded-2xl p-5 text-center">
               <div className="text-4xl mb-2">🏆</div>
-              <h3 className="font-bold text-foreground mb-1">Badge Collection</h3>
-              <p className="text-sm text-muted-foreground">
-                Unlock achievements by crushing your goals
+              <h3 className="font-bold text-white mb-1">Badge Collection</h3>
+              <p className="text-sm text-gray-400">
+                Tap badges multiple times to unlock them with confetti!
               </p>
             </div>
 
@@ -163,22 +208,22 @@ const Leaderboard = () => {
                 <div
                   key={badge.name}
                   className={cn(
-                    "bg-card rounded-xl shadow-card p-4 flex items-center gap-4 transition-all",
-                    badge.unlocked ? "border-2 border-success" : "opacity-60"
+                    "bg-[#131629] border border-[#1E3A8A]/30 rounded-xl p-4 flex items-center gap-4 transition-all",
+                    badge.unlocked ? "border-[#3B82F6]" : "opacity-60"
                   )}
                 >
                   <div className="text-3xl">{badge.icon}</div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <p className="font-semibold text-foreground">{badge.name}</p>
+                      <p className="font-semibold text-white">{badge.name}</p>
                       {badge.unlocked && (
-                        <Award className="w-4 h-4 text-success" />
+                        <Award className="w-4 h-4 text-[#3B82F6]" />
                       )}
                     </div>
-                    <p className="text-sm text-muted-foreground">{badge.description}</p>
+                    <p className="text-sm text-gray-400">{badge.description}</p>
                   </div>
                   {badge.unlocked && (
-                    <div className="text-xs font-semibold text-success bg-success/10 px-3 py-1 rounded-full">
+                    <div className="text-xs font-semibold text-[#3B82F6] bg-[#3B82F6]/10 px-3 py-1 rounded-full">
                       Unlocked
                     </div>
                   )}
@@ -188,6 +233,13 @@ const Leaderboard = () => {
           </div>
         )}
       </div>
+
+      {/* User Profile Sheet */}
+      <UserProfileSheet
+        user={selectedUser}
+        open={sheetOpen}
+        onOpenChange={setSheetOpen}
+      />
     </div>
   );
 };
