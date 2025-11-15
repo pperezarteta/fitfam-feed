@@ -18,7 +18,9 @@ type Tab = "weekly" | "monthly" | "badges";
 const Leaderboard = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [hasSeenAddFriends, setHasSeenAddFriends] = useState(false);
+  const [hasSeenAddFriends, setHasSeenAddFriends] = useState(() => {
+    return localStorage.getItem("hasSeenAddFriends") === "true";
+  });
   const [activeTab, setActiveTab] = useState<Tab>(
     (location.state?.activeTab as Tab) || "weekly"
   );
@@ -29,8 +31,13 @@ const Leaderboard = () => {
   const [prModalOpen, setPrModalOpen] = useState(false);
   const [rankModalOpen, setRankModalOpen] = useState(false);
 
+  const handleAddFriendsComplete = () => {
+    localStorage.setItem("hasSeenAddFriends", "true");
+    setHasSeenAddFriends(true);
+  };
+
   if (!hasSeenAddFriends) {
-    return <AddFriendsFlow onComplete={() => setHasSeenAddFriends(true)} />;
+    return <AddFriendsFlow onComplete={handleAddFriendsComplete} />;
   }
 
   const allUsers = [
