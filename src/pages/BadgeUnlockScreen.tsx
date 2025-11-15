@@ -14,6 +14,13 @@ const BadgeUnlockScreen = () => {
 
   const badge = allBadges.find((b) => b.id === badgeId);
 
+  // Redirect if badge is not unlocked or not found
+  useEffect(() => {
+    if (!badge || !badge.unlocked) {
+      navigate("/leaderboard", { state: { activeTab: "badges" } });
+    }
+  }, [badge, navigate]);
+
   useEffect(() => {
     let interval: NodeJS.Timeout;
 
@@ -68,7 +75,7 @@ const BadgeUnlockScreen = () => {
 
     // Redirect after delay
     setTimeout(() => {
-      navigate("/leaderboard");
+      navigate("/leaderboard", { state: { activeTab: "badges" } });
     }, 2500);
   };
 
