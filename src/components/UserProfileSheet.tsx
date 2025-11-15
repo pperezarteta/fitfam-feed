@@ -131,12 +131,24 @@ export const UserProfileSheet = ({ user, open, onOpenChange }: UserProfileSheetP
         </div>
 
         {/* Recent Photos */}
-        <div className="mb-6">
+        <div>
           <h3 className="text-white font-semibold mb-3">Recent Photos</h3>
           <div className="grid grid-cols-3 gap-2">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="aspect-square bg-[#131629] border border-[#1E3A8A]/30 rounded-lg" />
-            ))}
+            {user.recentPhotos && user.recentPhotos.length > 0 ? (
+              user.recentPhotos.map((photo, index) => (
+                <div key={index} className="aspect-square rounded-lg overflow-hidden">
+                  <img 
+                    src={photo} 
+                    alt={`${user.name}'s workout ${index + 1}`}
+                    className="w-full h-full object-cover hover:scale-110 transition-transform cursor-pointer"
+                  />
+                </div>
+              ))
+            ) : (
+              <div className="col-span-3 text-center text-gray-400 text-sm py-4">
+                No photos yet
+              </div>
+            )}
           </div>
         </div>
       </SheetContent>

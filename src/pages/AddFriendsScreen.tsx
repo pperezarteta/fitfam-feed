@@ -21,8 +21,8 @@ const AddFriendsScreen = () => {
   const handleAddFriend = (friendId: string, friendName: string) => {
     setAddedFriends((prev) => new Set(prev).add(friendId));
     toast({
-      title: "Friend Added!",
-      description: `${friendName} has been added to your crew.`,
+      title: "Friend Request Sent!",
+      description: `Your request to ${friendName} is pending.`,
     });
   };
 
@@ -172,12 +172,12 @@ const FriendCard = ({ friend, isAdded, onAdd }: FriendCardProps) => {
         disabled={isAdded}
         className={`${
           isAdded
-            ? "bg-green-500/20 text-green-400 border border-green-400/50"
+            ? "bg-yellow-500/20 text-yellow-400 border border-yellow-400/50 cursor-default"
             : "bg-gradient-to-r from-[#1E3A8A] to-[#3B82F6] text-white hover:opacity-90"
         }`}
         size="sm"
       >
-        {isAdded ? "Added" : "Add"}
+        {isAdded ? "Requested" : "Add"}
       </Button>
     </div>
   );

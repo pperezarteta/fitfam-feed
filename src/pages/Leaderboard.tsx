@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { LeaderboardCard } from "@/components/LeaderboardCard";
 import { AddFriendsFlow } from "@/components/AddFriendsFlow";
@@ -7,6 +7,7 @@ import { UserProfileSheet } from "@/components/UserProfileSheet";
 import { EditProfileModal } from "@/components/EditProfileModal";
 import { CrewManagementModal } from "@/components/CrewManagementModal";
 import { PRDetailModal } from "@/components/PRDetailModal";
+import { RankInsightsModal } from "@/components/RankInsightsModal";
 import { BadgeCard } from "@/components/BadgeCard";
 import { currentUser, friends, Friend, badges } from "@/data/mockData";
 import { cn } from "@/lib/utils";
@@ -16,13 +17,17 @@ type Tab = "weekly" | "monthly" | "badges";
 
 const Leaderboard = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [hasSeenAddFriends, setHasSeenAddFriends] = useState(false);
-  const [activeTab, setActiveTab] = useState<Tab>("weekly");
+  const [activeTab, setActiveTab] = useState<Tab>(
+    (location.state?.activeTab as Tab) || "weekly"
+  );
   const [selectedUser, setSelectedUser] = useState<Friend | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [editProfileOpen, setEditProfileOpen] = useState(false);
   const [crewModalOpen, setCrewModalOpen] = useState(false);
   const [prModalOpen, setPrModalOpen] = useState(false);
+  const [rankModalOpen, setRankModalOpen] = useState(false);
 
   if (!hasSeenAddFriends) {
     return <AddFriendsFlow onComplete={() => setHasSeenAddFriends(true)} />;
@@ -133,13 +138,19 @@ const Leaderboard = () => {
         {(activeTab === "weekly" || activeTab === "monthly") && (
           <div className="space-y-6">
             {/* Add Friends Button */}
-            <button className="w-full bg-[#131629] border border-[#1E3A8A]/30 rounded-xl p-4 flex items-center justify-center gap-2 hover:border-[#3B82F6]/50 transition-all">
+            <button 
+              onClick={() => navigate("/leaderboard/add-friends")}
+              className="w-full bg-[#131629] border border-[#1E3A8A]/30 rounded-xl p-4 flex items-center justify-center gap-2 hover:border-[#3B82F6]/50 transition-all active:scale-95"
+            >
               <UserPlus className="w-5 h-5 text-[#3B82F6]" />
               <span className="text-white font-medium">Add More Friends</span>
             </button>
 
             {/* Your rank card */}
-            <div className="bg-gradient-to-br from-[#1E3A8A]/20 to-[#3B82F6]/20 rounded-2xl p-5 border border-[#3B82F6]/30">
+            <button 
+              onClick={() => setRankModalOpen(true)}
+              className="w-full bg-gradient-to-br from-[#1E3A8A]/20 to-[#3B82F6]/20 rounded-2xl p-5 border border-[#3B82F6]/30 hover:border-[#3B82F6]/50 transition-all cursor-pointer active:scale-95 text-left"
+            >
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <Trophy className="w-5 h-5 text-[#3B82F6]" />
@@ -148,9 +159,9 @@ const Leaderboard = () => {
                 <span className="text-2xl font-bold text-[#3B82F6]">#{currentUserRank}</span>
               </div>
               <p className="text-sm text-gray-400">
-                {currentUser.weeklyWorkouts} of {currentUser.gymGoalPerWeek} workouts completed
+                {currentUser.weeklyWorkouts} of {currentUser.gymGoalPerWeek} workouts completed • Tap for insights
               </p>
-            </div>
+            </button>
 
             {/* Crew Rankings */}
             <div className="space-y-3">
@@ -182,21 +193,22 @@ const Leaderboard = () => {
                 .filter(f => f.pr)
                 .slice(0, 3)
                 .map(friend => (
-                  <div
+                  <button
                     key={friend.id}
-                    className="bg-[#131629] border border-[#3B82F6]/30 rounded-xl p-4 flex items-center gap-3"
+                    onClick={() => handlePRClick(friend)}
+                    className="w-full bg-[#131629] border border-[#3B82F6]/30 rounded-xl p-4 flex items-center gap-3 hover:border-[#3B82F6]/50 transition-all cursor-pointer active:scale-95"
                   >
                     <img
                       src={friend.photo}
                       alt={friend.name}
                       className="w-10 h-10 rounded-full object-cover"
                     />
-                    <div className="flex-1">
+                    <div className="flex-1 text-left">
                       <p className="font-semibold text-white">{friend.name}</p>
                       <p className="text-sm text-[#3B82F6] font-medium">{friend.pr}</p>
                     </div>
                     <Trophy className="w-5 h-5 text-[#3B82F6]" />
-                  </div>
+                  </button>
                 ))}
             </div>
           </div>
@@ -222,6 +234,15 @@ const Leaderboard = () => {
       <EditProfileModal open={editProfileOpen} onOpenChange={setEditProfileOpen} currentPhoto={currentUser.photo} currentName={currentUser.name} currentUsername={currentUser.username} currentGoal={currentUser.gymGoalPerWeek} />
       <CrewManagementModal open={crewModalOpen} onOpenChange={setCrewModalOpen} userStats={userStats} />
       <PRDetailModal open={prModalOpen} onOpenChange={setPrModalOpen} user={selectedUser} />
+      <RankInsightsModal 
+        open={rankModalOpen} 
+        onOpenChange={setRankModalOpen} 
+        userRank={currentUserRank}
+        userWorkouts={currentUser.weeklyWorkouts}
+        topUserName={sortedUsers[0]?.name || ""}
+        topUserWorkouts={sortedUsers[0]?.weeklyWorkouts || 0}
+        weeklyGoal={currentUser.gymGoalPerWeek}
+      />
     </div>
   );
 };

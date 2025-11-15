@@ -28,6 +28,7 @@ export const CrewManagementModal = ({ open, onOpenChange, userStats }: CrewManag
   const [minPR, setMinPR] = useState(0);
   const [minBadges, setMinBadges] = useState(0);
   const [minStreak, setMinStreak] = useState(0);
+  const [pendingCrews, setPendingCrews] = useState<Set<string>>(new Set());
   const { toast } = useToast();
 
   const filteredCrews = crews.filter((crew) =>
@@ -56,9 +57,10 @@ export const CrewManagementModal = ({ open, onOpenChange, userStats }: CrewManag
       return;
     }
 
+    setPendingCrews((prev) => new Set(prev).add(crew.id));
     toast({
-      title: "Joined Crew!",
-      description: `You're now a member of ${crew.name}`,
+      title: "Request Sent!",
+      description: `Your request to join ${crew.name} is pending`,
     });
   };
 
@@ -134,11 +136,15 @@ export const CrewManagementModal = ({ open, onOpenChange, userStats }: CrewManag
                       </div>
                       <Button
                         onClick={() => handleJoinCrew(crew)}
-                        disabled={!meetsRequirements}
-                        className="bg-gradient-to-r from-[#1E3A8A] to-[#3B82F6] text-white hover:opacity-90 disabled:opacity-40"
+                        disabled={!meetsRequirements || pendingCrews.has(crew.id)}
+                        className={`${
+                          pendingCrews.has(crew.id)
+                            ? "bg-yellow-500/20 text-yellow-400 border border-yellow-400/50 cursor-default"
+                            : "bg-gradient-to-r from-[#1E3A8A] to-[#3B82F6] text-white hover:opacity-90"
+                        } disabled:opacity-40`}
                         size="sm"
                       >
-                        Join
+                        {pendingCrews.has(crew.id) ? "Pending" : "Join"}
                       </Button>
                     </div>
 

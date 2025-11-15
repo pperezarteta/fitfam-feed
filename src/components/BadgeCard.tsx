@@ -12,10 +12,22 @@ export const BadgeCard = ({ badge, onClick }: BadgeCardProps) => {
     ? (badge.progress / badge.requirement.count) * 100
     : 0;
 
+  const handleClick = () => {
+    if (!badge.unlocked) {
+      // Don't navigate for locked badges
+      return;
+    }
+    onClick();
+  };
+
   return (
     <button
-      onClick={onClick}
-      className="group relative p-4 bg-[#131629] border border-[#1E3A8A]/30 rounded-xl hover:border-[#3B82F6]/50 hover:bg-[#1a1d35] transition-all active:scale-95"
+      onClick={handleClick}
+      className={`group relative p-4 bg-[#131629] border border-[#1E3A8A]/30 rounded-xl transition-all ${
+        badge.unlocked 
+          ? "hover:border-[#3B82F6]/50 hover:bg-[#1a1d35] cursor-pointer active:scale-95" 
+          : "cursor-not-allowed opacity-70"
+      }`}
     >
       {/* Badge Icon */}
       <div className="flex items-center justify-center mb-3">
@@ -55,7 +67,16 @@ export const BadgeCard = ({ badge, onClick }: BadgeCardProps) => {
       {/* Unlocked Badge */}
       {badge.unlocked && (
         <div className="flex items-center justify-center">
-          <span className="text-xs text-green-400 font-medium">Unlocked</span>
+          <span className="text-xs text-green-400 font-medium">✓ Tap to unlock</span>
+        </div>
+      )}
+
+      {/* Locked Requirements */}
+      {!badge.unlocked && (
+        <div className="text-center">
+          <p className="text-xs text-gray-500">
+            {badge.progress || 0}/{badge.requirement.count} {badge.requirement.type}
+          </p>
         </div>
       )}
 
